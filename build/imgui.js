@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as Bind from "bind-imgui";
+import * as Bind from "./bind-imgui";
 export { Bind };
 let bind;
 export default function (value) {
