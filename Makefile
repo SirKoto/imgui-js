@@ -40,8 +40,8 @@ BIND_IMGUI_OUTPUT_JS = build/bind-imgui.js
 # FLAGS += -s ASSERTIONS=1
 # FLAGS += -s SAFE_HEAP=1
 
-FLAGS += -Os
-
+# FLAGS += -Os
+FLAGS += -Og
 FLAGS += -D "IM_ASSERT(EXPR)=((void)(EXPR))"
 
 FLAGS += -D IMGUI_DISABLE_OBSOLETE_FUNCTIONS

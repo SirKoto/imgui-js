@@ -4,7 +4,7 @@
     "strict": true,
     "sourceMap": true,
     "declaration": true,
-    "outDir": "build",
+    "outDir": "../build/impl",
     "baseUrl": ".",
     "paths": {
       "imgui-js": [ "../build/imgui" ],

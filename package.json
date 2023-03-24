@@ -2,8 +2,13 @@
   "name": "imgui-js",
   "version": "1.0.0",
   "description": "JavaScript bindings for Dear ImGui using Emscripten and TypeScript",
-  "main": "imgui.js",
-  "types": "imgui.ts",
+  "main": "build/imgui",
+  "types": "build/imgui",
+  "exports": {
+    ".": "build/imgui",
+    "./build/impl/imgui_impl": "build/impl/imgui_impl",
+    "./build/impl/imgui_demo": "build/impl/imgui_demo"
+  },
   "scripts": {
     "build": "make build-bind-imgui && npm run build-imgui",
     "clean": "make clean-bind-imgui && npm run clean-imgui",
