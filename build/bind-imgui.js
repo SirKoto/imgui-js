@@ -1,7 +1,7 @@
 
 var Module = (() => {
   var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
-  
+  if (typeof __filename !== 'undefined') _scriptDir = _scriptDir || __filename;
   return (
 function(Module = {})  {
 
@@ -24,13 +24,13 @@ var quit_ = (status, toThrow) => {
  throw toThrow;
 };
 
-var ENVIRONMENT_IS_WEB = true;
+var ENVIRONMENT_IS_WEB = typeof window == "object";
 
-var ENVIRONMENT_IS_WORKER = false;
+var ENVIRONMENT_IS_WORKER = typeof importScripts == "function";
 
-var ENVIRONMENT_IS_NODE = false;
+var ENVIRONMENT_IS_NODE = typeof process == "object" && typeof process.versions == "object" && typeof process.versions.node == "string";
 
-var ENVIRONMENT_IS_SHELL = false;
+var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 
 var scriptDirectory = "";
 
@@ -43,7 +43,51 @@ function locateFile(path) {
 
 var read_, readAsync, readBinary, setWindowTitle;
 
-if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
+if (ENVIRONMENT_IS_NODE) {
+ var fs = require("fs");
+ var nodePath = require("path");
+ if (ENVIRONMENT_IS_WORKER) {
+  scriptDirectory = nodePath.dirname(scriptDirectory) + "/";
+ } else {
+  scriptDirectory = __dirname + "/";
+ }
+ read_ = (filename, binary) => {
+  var ret = tryParseAsDataURI(filename);
+  if (ret) {
+   return binary ? ret : ret.toString();
+  }
+  filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename);
+  return fs.readFileSync(filename, binary ? undefined : "utf8");
+ };
+ readBinary = filename => {
+  var ret = read_(filename, true);
+  if (!ret.buffer) {
+   ret = new Uint8Array(ret);
+  }
+  return ret;
+ };
+ readAsync = (filename, onload, onerror) => {
+  var ret = tryParseAsDataURI(filename);
+  if (ret) {
+   onload(ret);
+  }
+  filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename);
+  fs.readFile(filename, function(err, data) {
+   if (err) onerror(err); else onload(data.buffer);
+  });
+ };
+ if (process.argv.length > 1) {
+  thisProgram = process.argv[1].replace(/\\/g, "/");
+ }
+ arguments_ = process.argv.slice(2);
+ quit_ = (status, toThrow) => {
+  process.exitCode = status;
+  throw toThrow;
+ };
+ Module["inspect"] = function() {
+  return "[Emscripten Module object]";
+ };
+} else if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
  if (ENVIRONMENT_IS_WORKER) {
   scriptDirectory = self.location.href;
  } else if (typeof document != "undefined" && document.currentScript) {
@@ -103311,7 +103355,7 @@ function instantiateArrayBuffer(binaryFile, imports, receiver) {
 }
 
 function instantiateAsync(binary, binaryFile, imports, callback) {
- if (!binary && typeof WebAssembly.instantiateStreaming == "function" && !isDataURI(binaryFile) && typeof fetch == "function") {
+ if (!binary && typeof WebAssembly.instantiateStreaming == "function" && !isDataURI(binaryFile) && !ENVIRONMENT_IS_NODE && typeof fetch == "function") {
   return fetch(binaryFile, {
    credentials: "same-origin"
   }).then(function(response) {
@@ -105497,6 +105541,10 @@ var decodeBase64 = typeof atob == "function" ? atob : function(input) {
 };
 
 function intArrayFromBase64(s) {
+ if (typeof ENVIRONMENT_IS_NODE == "boolean" && ENVIRONMENT_IS_NODE) {
+  var buf = Buffer.from(s, "base64");
+  return new Uint8Array(buf["buffer"], buf["byteOffset"], buf["byteLength"]);
+ }
  try {
   var decoded = decodeBase64(s);
   var bytes = new Uint8Array(decoded.length);
