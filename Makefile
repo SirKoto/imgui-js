@@ -34,7 +34,7 @@ BIND_IMGUI_OUTPUT_O = build/bind-imgui.o
 BIND_IMGUI_OUTPUT_JS = build/bind-imgui.js
 
 # debug flags
-# FLAGS += -g4
+FLAGS += -gsource-map
 # FLAGS += -O0
 # FLAGS += --source-map-base http://127.0.0.1:8080/
 # FLAGS += -s ASSERTIONS=1
