@@ -211,19 +211,30 @@ export function Init(value: HTMLCanvasElement | WebGL2RenderingContext | WebGLRe
         // console.log(`set clipboard_text: "${clipboard_text}"`);
         if (typeof navigator !== "undefined" && typeof (navigator as any).clipboard !== "undefined") {
             // console.log(`clipboard.writeText: "${clipboard_text}"`);
+            let locked = true;
             (navigator as any).clipboard.writeText(clipboard_text).then((): void => {
                 // console.log(`clipboard.writeText: "${clipboard_text}" done.`);
-            });
+                locked = false;
+            }, () => { locked = false; }
+            ).catch(() => { locked = false; });
+
+            while(locked) {}
         }
     };
     io.GetClipboardTextFn = (user_data: any): string => {
-        // if (typeof navigator !== "undefined" && typeof (navigator as any).clipboard !== "undefined") {
-        //     console.log(`clipboard.readText: "${clipboard_text}"`);
-        //     (navigator as any).clipboard.readText().then((text: string): void => {
-        //         clipboard_text = text;
-        //         console.log(`clipboard.readText: "${clipboard_text}" done.`);
-        //     });
-        // }
+        if (typeof navigator !== "undefined" && typeof (navigator as any).clipboard !== "undefined") {
+            let locked = true;
+            // console.log(`clipboard.readText: "${clipboard_text}"`);
+            (navigator as any).clipboard.readText().then((text: string): void => {
+                clipboard_text = text;
+                locked = false;
+                // console.log(`clipboard.readText: "${clipboard_text}" done.`);
+                }, 
+                () => {locked = false;} 
+            ).catch(() => { locked = false; });
+
+            while(locked) {}
+        }
         // console.log(`get clipboard_text: "${clipboard_text}"`);
         return clipboard_text;
     };
