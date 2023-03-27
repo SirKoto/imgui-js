@@ -75,8 +75,9 @@ function canvas_on_keydown(event) {
     ImGui.ASSERT(key_index >= 0 && key_index < ImGui.ARRAYSIZE(io.KeysDown));
     io.KeysDown[key_index] = true;
     // forward to the keypress event
-    if ( /*io.WantCaptureKeyboard ||*/event.key === "Tab") {
+    if (io.WantCaptureKeyboard /* || event.key === "Tab" */) {
         event.preventDefault();
+        event.stopImmediatePropagation();
     }
 }
 function canvas_on_keyup(event) {
@@ -91,6 +92,7 @@ function canvas_on_keyup(event) {
     io.KeysDown[key_index] = false;
     if (io.WantCaptureKeyboard) {
         event.preventDefault();
+        event.stopImmediatePropagation();
     }
 }
 function canvas_on_keypress(event) {
@@ -99,6 +101,7 @@ function canvas_on_keypress(event) {
     io.AddInputCharacter(event.charCode);
     if (io.WantCaptureKeyboard) {
         event.preventDefault();
+        event.stopImmediatePropagation();
     }
 }
 function canvas_on_pointermove(event) {
@@ -160,6 +163,7 @@ function canvas_on_wheel(event) {
     io.MouseWheel = -event.deltaY * scale; // Mouse wheel: 1 unit scrolls about 5 lines text.
     if (io.WantCaptureMouse) {
         event.preventDefault();
+        event.stopImmediatePropagation();
     }
 }
 export function Init(value) {
