@@ -35,13 +35,14 @@ BIND_IMGUI_OUTPUT_JS = build/bind-imgui.js
 
 # debug flags
 FLAGS += -gsource-map
+FLAGS += -g3
 # FLAGS += -O0
 # FLAGS += --source-map-base http://127.0.0.1:8080/
-# FLAGS += -s ASSERTIONS=1
-BIND_FLAGS += -s SAFE_HEAP=1
+BIND_FLAGS += -s ASSERTIONS=1
+BIND_FLAGS += -s SAFE_HEAP=0
 
 # FLAGS += -Os
-FLAGS += -O0
+FLAGS += -O2
 FLAGS += -D "IM_ASSERT(EXPR)=((void)(EXPR))"
 FLAGS += -D IMGUI_DISABLE_FILE_FUNCTIONS
 
