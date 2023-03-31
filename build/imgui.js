@@ -1400,7 +1400,7 @@ export class ImDrawCmd {
 // typedef unsigned short ImDrawIdx;
 // #endif
 export { ImDrawIdxSize as DrawIdxSize };
-export const ImDrawIdxSize = 2; // bind.ImDrawIdxSize;
+export const ImDrawIdxSize = 4; // bind.ImDrawIdxSize;
 // Vertex layout
 // #ifndef IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT
 export { ImDrawVertSize as DrawVertSize };
