@@ -40,6 +40,7 @@ BIND_IMGUI_OUTPUT_JS = build/bind-imgui.js
 # FLAGS += --source-map-base http://127.0.0.1:8080/
 BIND_FLAGS += -s ASSERTIONS=1
 BIND_FLAGS += -s SAFE_HEAP=0
+BIND_FLAGS += -s ALLOW_MEMORY_GROWTH=1
 
 FLAGS += -Os
 # FLAGS += -O2
